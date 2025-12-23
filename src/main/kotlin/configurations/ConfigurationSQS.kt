@@ -5,17 +5,29 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
 import software.amazon.awssdk.regions.Region
+import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import software.amazon.awssdk.services.sqs.SqsClient
 import java.net.URI
 
 @Configuration
-class ConfigurationSQS(
-    @get:Value("\${aws.region:us-east-1}")
-    private val region: String,
+class ConfigurationSQS {
 
-    @get:Value("\${aws.sqs.endpoint:}")
-    private val endpoint: String
-) {
+    @Value("\${aws.region}")
+    lateinit var region: String
+
+    @Value("\${aws.sqs.endpoint:}")
+    lateinit var endpoint: String
+
+    @Bean
+    fun sqsAsyncClient(): SqsAsyncClient {
+        val builder = SqsAsyncClient.builder()
+            .region(Region.of(region))
+            .credentialsProvider(DefaultCredentialsProvider.create())
+
+        builder.endpointOverride(URI.create(endpoint))
+
+        return builder.build()
+    }
 
     @Bean
     fun sqsClient(): SqsClient {
