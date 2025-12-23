@@ -12,6 +12,7 @@ class ConsumerSQS {
     fun consume(messageBody: String) {
         try {
             log.info("[ConsumerSQS] Received message body={}", messageBody)
+            messageBody.toInt()
         } catch (e: Exception) {
             log.error("[ConsumerSQS] Error processing message", e)
             throw e
