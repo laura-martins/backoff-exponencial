@@ -1,14 +1,9 @@
 services:
   localstack:
-    build: ./localstack
+    build: ./docker/localstack
     container_name: localstack
     environment:
       SERVICES: sqs
       AWS_DEFAULT_REGION: sa-east-1
     ports:
       - "4566:4566"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4566/health"]
-      interval: 5s
-      timeout: 5s
-      retries: 20
