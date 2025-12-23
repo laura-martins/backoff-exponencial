@@ -1,27 +1,32 @@
 package br.com.backoff.exponencial.producers
 
+import br.com.backoff.exponencial.exceptions.SqsPublishException
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import software.amazon.awssdk.core.exception.SdkClientException
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest
-import software.amazon.awssdk.core.exception.SdkException
 
 @Component
 class ProducerSQS(
     private val sqsClient: SqsClient
 ) {
 
-    fun send(queueUrl: String, messageBody: String) {
+    @Value("\${aws.sqs.queue.test-name}")
+    lateinit var queueName: String
+
+    fun send(messageBody: String) {
         val request = SendMessageRequest.builder()
-            .queueUrl(queueUrl)
+            .queueUrl(queueName)
             .messageBody(messageBody)
             .build()
 
         try {
             sqsClient.sendMessage(request)
-        } catch (e: SdkException) {
-            throw SqsPublishException("Falha ao publicar mensagem na fila: $queueUrl", e)
+        } catch (e: SdkClientException) {
+            throw SqsPublishException("[ProducerSQS] Failed to publish message to queue: $queueName", e)
         } catch (e: Exception) {
-            throw SqsPublishException("Erro inesperado ao publicar mensagem na fila: $queueUrl", e)
+            throw SqsPublishException("[ProducerSQS] Unexpected error publishing message to queue: $queueName", e)
         }
     }
 }
