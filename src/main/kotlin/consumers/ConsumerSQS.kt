@@ -23,8 +23,9 @@ class ConsumerSQS(
 
             val body = messageBody.payload.toDomain()
 
-            // Simulate processing that may fail
+            // simula falha
             body.id.toInt()
+
         } catch (ex: Exception) {
             logger.error("[ConsumerSQS] Error processing message", ex)
 

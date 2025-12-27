@@ -14,24 +14,35 @@ class ExponentialBackoffAdapter(
     fun applyBackoff(
         queueName: String,
         receiptHandle: String,
-        receiveCount: Int,
+        receiveCount: Int
     ) {
+        if (!backoffPolicy.shouldApplyBackoff(receiveCount)) {
+            logger.warn("Max receive attempts reached ({}). Skipping backoff; message will be sent to DLQ.", receiveCount)
+            return
+        }
+
         try {
             val visibilityTimeout = backoffPolicy.calculateVisibilityTimeout(receiveCount)
 
             val queueUrl = sqsClient.getQueueUrl { it.queueName(queueName) }.queueUrl()
 
-            val req = ChangeMessageVisibilityRequest.builder()
+            val request = ChangeMessageVisibilityRequest.builder()
                 .queueUrl(queueUrl)
                 .receiptHandle(receiptHandle)
                 .visibilityTimeout(visibilityTimeout)
                 .build()
 
-            sqsClient.changeMessageVisibility(req)
+            sqsClient.changeMessageVisibility(request)
 
-            logger.warn("SQS retry applied | queue=$queueUrl | attempt=$receiveCount | visibilityTimeout=${visibilityTimeout}s")
+            logger.warn(
+                "SQS backoff applied | attempt={} | visibilityTimeout={}s | queue={}",
+                receiveCount,
+                visibilityTimeout,
+                queueUrl
+            )
+
         } catch (ex: Exception) {
-            logger.error("Failed to change message visibility", ex)
+            logger.error("Failed to apply SQS visibility backoff", ex)
         }
     }
 
