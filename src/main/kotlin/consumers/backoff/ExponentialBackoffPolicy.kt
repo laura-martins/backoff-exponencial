@@ -8,7 +8,7 @@ class ExponentialBackoffPolicy(
 
     private val baseVisibilityTimeout: Long = 30,
     private val maxVisibilityTimeout: Long = 15 * 60,
-    private val maxReceiveCount: Int = 3
+    private var maxReceiveCount: Int = 3
 ) {
 
     fun shouldApplyBackoff(attempt: Int): Boolean {

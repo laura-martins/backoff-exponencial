@@ -17,7 +17,7 @@ class ExponentialBackoffAdapter(
         receiveCount: Int
     ) {
         if (!backoffPolicy.shouldApplyBackoff(receiveCount)) {
-            logger.warn("Max receive attempts reached ({}). Skipping backoff; message will be sent to DLQ.", receiveCount)
+            logger.warn("Max receive attempts reached ({}). Skipping backoff — message will be moved to DLQ.", receiveCount)
             return
         }
 
@@ -35,14 +35,14 @@ class ExponentialBackoffAdapter(
             sqsClient.changeMessageVisibility(request)
 
             logger.warn(
-                "SQS backoff applied | attempt={} | visibilityTimeout={}s | queue={}",
+                "Backoff applied | attempt={} | visibilityTimeout={}s | queue={}",
                 receiveCount,
                 visibilityTimeout,
                 queueUrl
             )
 
         } catch (ex: Exception) {
-            logger.error("Failed to apply SQS visibility backoff", ex)
+            logger.error("Failed to apply SQS visibility timeout", ex)
         }
     }
 
