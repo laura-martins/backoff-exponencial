@@ -64,17 +64,12 @@ awslocal sqs send-message \
 *Requisitos*:
 - Java 17
 - Maven
-- LocalStack
+- Docker para executar LocalStack
 
-![img.png](img.png)
+*Configurações*: 
+- SPRING_PROFILES_ACTIVE=local
 
-Comando para ver metadados da mensagem:
-```bash
-awslocal sqs receive-message \
-  --queue-url "http://sqs.sa-east-1.localhost.localstack.cloud:4566/000000000000/test-queue" \
-  --attribute-names All \
-  --message-attribute-names All \
-  --max-number-of-messages 1 \
-  --output json
-```
+![readme_exec_application.png](images/readme_exec_application.png)
+
+
 

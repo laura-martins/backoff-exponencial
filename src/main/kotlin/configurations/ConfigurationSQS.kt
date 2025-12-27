@@ -3,13 +3,15 @@ package br.com.backoff.exponencial.configurations
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider
+import org.springframework.context.annotation.Profile
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider
 import software.amazon.awssdk.regions.Region
-import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import software.amazon.awssdk.services.sqs.SqsClient
 import java.net.URI
 
 @Configuration
+@Profile("local")
 class ConfigurationSQS {
 
     @Value("\${aws.region}")
@@ -18,22 +20,20 @@ class ConfigurationSQS {
     @Value("\${aws.sqs.endpoint:}")
     lateinit var endpoint: String
 
-    @Bean
-    fun sqsAsyncClient(): SqsAsyncClient {
-        val builder = SqsAsyncClient.builder()
-            .region(Region.of(region))
-            .credentialsProvider(DefaultCredentialsProvider.create())
+    @Value("\${aws.sqs.accessKey}")
+    lateinit var accessKey: String
 
-        builder.endpointOverride(URI.create(endpoint))
+    @Value("\${aws.sqs.secretKey}")
+    lateinit var secretKey: String
 
-        return builder.build()
-    }
+    private fun credentialsProvider() =
+        StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey))
 
     @Bean
     fun sqsClient(): SqsClient {
         val builder = SqsClient.builder()
             .region(Region.of(region))
-            .credentialsProvider(DefaultCredentialsProvider.create())
+            .credentialsProvider(credentialsProvider())
 
         builder.endpointOverride(URI.create(endpoint))
 
