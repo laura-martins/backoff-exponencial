@@ -14,7 +14,7 @@ import java.net.URI
 
 @Configuration
 @Profile("local")
-class ConfigurationSQS {
+class SQSConfiguration {
 
     @Value("\${aws.region}")
     lateinit var region: String
