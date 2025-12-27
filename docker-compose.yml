@@ -1,9 +1,11 @@
 services:
   localstack:
-    build: ./docker/localstack
+    build: ./localstack
     container_name: localstack
     environment:
       SERVICES: sqs
       AWS_DEFAULT_REGION: sa-east-1
     ports:
       - "4566:4566"
+    volumes:
+      - "./localstack:/etc/localstack/init/ready.d"
