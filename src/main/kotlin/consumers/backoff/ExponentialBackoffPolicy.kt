@@ -1,4 +1,4 @@
-package br.com.backoff.exponencial.consumers
+package br.com.backoff.exponencial.consumers.backoff
 
 import org.springframework.stereotype.Component
 

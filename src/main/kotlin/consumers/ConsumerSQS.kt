@@ -1,10 +1,13 @@
 package br.com.backoff.exponencial.consumers
 
+import br.com.backoff.exponencial.consumers.backoff.ExponentialBackoffAdapter
+import br.com.backoff.exponencial.consumers.mappers.toDomain
+import br.com.backoff.exponencial.consumers.messages.CheckPaymentMessage
 import io.awspring.cloud.sqs.annotation.SqsListener
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.messaging.Message
 import org.springframework.stereotype.Component
-import software.amazon.awssdk.services.sqs.model.Message
 
 @Component
 class ConsumerSQS(
@@ -12,27 +15,27 @@ class ConsumerSQS(
 ) {
 
     @Value("\${aws.sqs.queue.url.test-name}")
-    lateinit var queueUrl: String
+    lateinit var queueName: String
 
     @SqsListener("\${aws.sqs.queue.test-name}")
     fun consume(
-        messageBody: Message
+        messageBody: Message<CheckPaymentMessage>
     ) {
+        logger.info("[ConsumerSQS] Received message body={}", messageBody)
+
         try {
-            logger.info("[ConsumerSQS] Received message body={}", messageBody)
-            val body = messageBody.body()
-            body.toInt() // Simulate processing that may fail
+            val body = messageBody.payload.toDomain()
+            body.id.toInt() // Simulate processing that may fail
         } catch (e: Exception) {
             logger.error("[ConsumerSQS] Error processing message", e)
 
-            val receiptHandle = messageBody.receiptHandle()
-            val receiveCount = messageBody.attributesAsStrings()["ApproximateReceiveCount"]
-                ?.toInt()
+            val receiptHandle = messageBody.headers["ReceiptHandle"] as String
+            val receiveCount = messageBody.headers["ApproximateReceiveCount"] as Int
 
             backoff.applyBackoff(
-                queueUrl = queueUrl,
+                queueName = queueName,
                 receiptHandle = receiptHandle,
-                receiveCount = requireNotNull(receiveCount)
+                receiveCount = receiveCount
             )
 
             throw e

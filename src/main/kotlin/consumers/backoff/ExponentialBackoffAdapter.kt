@@ -1,24 +1,26 @@
-package br.com.backoff.exponencial.consumers
+package br.com.backoff.exponencial.consumers.backoff
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import software.amazon.awssdk.services.sqs.SqsAsyncClient
+import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest
 
 @Component
 class ExponentialBackoffAdapter(
-    private val sqsAsyncClient: SqsAsyncClient,
+    private val sqsAsyncClient: SqsClient,
     private val backoffPolicy: ExponentialBackoffPolicy
 ) {
 
     fun applyBackoff(
-        queueUrl: String,
+        queueName: String,
         receiptHandle: String,
         receiveCount: Int
     ) {
         val visibilityTimeout = backoffPolicy.calculateVisibilityTimeout(receiveCount)
 
         try {
+            val queueUrl = sqsAsyncClient.getQueueUrl { it.queueName(queueName) }.queueUrl()
+
             val req = ChangeMessageVisibilityRequest.builder()
                 .queueUrl(queueUrl)
                 .receiptHandle(receiptHandle)
