@@ -7,19 +7,19 @@ import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest
 
 @Component
 class ExponentialBackoffAdapter(
-    private val sqsAsyncClient: SqsClient,
+    private val sqsClient: SqsClient,
     private val backoffPolicy: ExponentialBackoffPolicy
 ) {
 
     fun applyBackoff(
         queueName: String,
         receiptHandle: String,
-        receiveCount: Int
+        receiveCount: Int,
     ) {
-        val visibilityTimeout = backoffPolicy.calculateVisibilityTimeout(receiveCount)
-
         try {
-            val queueUrl = sqsAsyncClient.getQueueUrl { it.queueName(queueName) }.queueUrl()
+            val visibilityTimeout = backoffPolicy.calculateVisibilityTimeout(receiveCount)
+
+            val queueUrl = sqsClient.getQueueUrl { it.queueName(queueName) }.queueUrl()
 
             val req = ChangeMessageVisibilityRequest.builder()
                 .queueUrl(queueUrl)
@@ -27,7 +27,7 @@ class ExponentialBackoffAdapter(
                 .visibilityTimeout(visibilityTimeout)
                 .build()
 
-            sqsAsyncClient.changeMessageVisibility(req)
+            sqsClient.changeMessageVisibility(req)
 
             logger.warn("SQS retry applied | queue=$queueUrl | attempt=$receiveCount | visibilityTimeout=${visibilityTimeout}s")
         } catch (ex: Exception) {

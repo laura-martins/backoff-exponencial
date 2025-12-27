@@ -13,24 +13,23 @@ import org.springframework.stereotype.Component
 class ConsumerSQS(
     private val backoff: ExponentialBackoffAdapter
 ) {
-
-    @Value("\${aws.sqs.queue.url.test-name}")
+    @Value("\${aws.sqs.queue.test-name}")
     lateinit var queueName: String
 
     @SqsListener("\${aws.sqs.queue.test-name}")
-    fun consume(
-        messageBody: Message<CheckPaymentMessage>
-    ) {
-        logger.info("[ConsumerSQS] Received message body={}", messageBody)
-
+    fun consume(messageBody: Message<CheckPaymentMessage>) {
         try {
-            val body = messageBody.payload.toDomain()
-            body.id.toInt() // Simulate processing that may fail
-        } catch (e: Exception) {
-            logger.error("[ConsumerSQS] Error processing message", e)
+            logger.info("[ConsumerSQS] Received message headers={} payload={}", messageBody.headers, messageBody.payload)
 
-            val receiptHandle = messageBody.headers["ReceiptHandle"] as String
-            val receiveCount = messageBody.headers["ApproximateReceiveCount"] as Int
+            val body = messageBody.payload.toDomain()
+
+            // Simulate processing that may fail
+            body.id.toInt()
+        } catch (ex: Exception) {
+            logger.error("[ConsumerSQS] Error processing message", ex)
+
+            val receiveCount = messageBody.headers[HEADER_RECEIVE_COUNT].toString().toInt()
+            val receiptHandle = messageBody.headers[HEADER_RECEIPT_HANDLE].toString()
 
             backoff.applyBackoff(
                 queueName = queueName,
@@ -38,11 +37,13 @@ class ConsumerSQS(
                 receiveCount = receiveCount
             )
 
-            throw e
+            throw ex
         }
     }
 
     companion object {
         private val logger = LoggerFactory.getLogger(ConsumerSQS::class.java)
+        private const val HEADER_RECEIVE_COUNT = "Sqs_Msa_ApproximateReceiveCount"
+        private const val HEADER_RECEIPT_HANDLE = "Sqs_ReceiptHandle"
     }
 }

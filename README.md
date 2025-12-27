@@ -48,7 +48,9 @@ http://sqs.sa-east-1.localhost.localstack.cloud:4566/000000000000/test-queue
 ```bash
 awslocal sqs send-message \
   --queue-url "http://sqs.sa-east-1.localhost.localstack.cloud:4566/000000000000/test-queue" \
-  --message-body "100"
+  --message-body '{
+    "paymentId": "123"
+  }'
 ```
 
 ### Erro (gera retry)
@@ -56,7 +58,9 @@ awslocal sqs send-message \
 ```bash
 awslocal sqs send-message \
   --queue-url "http://sqs.sa-east-1.localhost.localstack.cloud:4566/000000000000/test-queue" \
-  --message-body "mensagem de teste"
+  --message-body '{
+    "paymentId": "Mensagem com erro"
+  }'
 ```
 
 ### Como executar a aplicação (local)
@@ -72,4 +76,4 @@ awslocal sqs send-message \
 ![readme_exec_application.png](images/readme_exec_application.png)
 
 
-
+https://nerddevs.com/retry-smarter-with-aws-sqs/
