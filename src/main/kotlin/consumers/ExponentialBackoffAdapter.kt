@@ -2,12 +2,12 @@ package br.com.backoff.exponencial.consumers
 
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import software.amazon.awssdk.services.sqs.SqsClient
+import software.amazon.awssdk.services.sqs.SqsAsyncClient
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest
 
 @Component
 class ExponentialBackoffAdapter(
-    private val sqsClient: SqsClient,
+    private val sqsAsyncClient: SqsAsyncClient,
     private val backoffPolicy: ExponentialBackoffPolicy
 ) {
 
@@ -25,7 +25,7 @@ class ExponentialBackoffAdapter(
                 .visibilityTimeout(visibilityTimeout)
                 .build()
 
-            sqsClient.changeMessageVisibility(req)
+            sqsAsyncClient.changeMessageVisibility(req)
 
             logger.warn("SQS retry applied | queue=$queueUrl | attempt=$receiveCount | visibilityTimeout=${visibilityTimeout}s")
         } catch (ex: Exception) {
