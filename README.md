@@ -68,12 +68,11 @@ awslocal sqs send-message \
 *Requisitos*:
 - Java 17
 - Maven
-- Docker para executar LocalStack
+- Docker
+- LocalStack
+- AWS CLI
 
 *Configurações*: 
 - SPRING_PROFILES_ACTIVE=local
 
 ![readme_exec_application.png](images/readme_exec_application.png)
-
-
-https://nerddevs.com/retry-smarter-with-aws-sqs/

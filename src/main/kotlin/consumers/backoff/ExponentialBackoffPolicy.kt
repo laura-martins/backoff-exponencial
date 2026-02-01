@@ -3,6 +3,7 @@ package br.com.backoff.exponencial.consumers.backoff
 import org.springframework.stereotype.Component
 import kotlin.math.min
 
+// Realizar teste unitário
 @Component
 class ExponentialBackoffPolicy(
 

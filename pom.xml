@@ -15,9 +15,9 @@
         <junit.version>5.10.0</junit.version>
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <jackson.kotlin.version>2.15.2</jackson.kotlin.version>
+        <aws.spring.version>3.0.2</aws.spring.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <kotlin.code.style>official</kotlin.code.style>
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
     </properties>
 
@@ -93,9 +93,21 @@
                 <version>${maven.surefire.plugin.version}</version>
             </plugin>
 
+            <!-- xml -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <mainClass>br.com.backoff.exponencial.BackoffExponencialMainKt</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -145,7 +157,6 @@
         <dependency>
             <groupId>io.awspring.cloud</groupId>
             <artifactId>spring-cloud-aws-starter-sqs</artifactId>
-            <version>3.0.2</version>
         </dependency>
 
         <!-- Jackson para serializar/deserializar com Kotlin -->
@@ -155,4 +166,16 @@
             <version>${jackson.kotlin.version}</version>
         </dependency>
     </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.awspring.cloud</groupId>
+                <artifactId>spring-cloud-aws-dependencies</artifactId>
+                <version>${aws.spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

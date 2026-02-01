@@ -9,8 +9,9 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.messaging.Message
 import org.springframework.stereotype.Component
 
+// Realizar teste unitário
 @Component
-class ConsumerSQS(
+class CheckPaymentConsumerSQS(
     private val backoff: ExponentialBackoffAdapter
 ) {
     @Value("\${aws.sqs.queue.test-name}")
@@ -43,7 +44,7 @@ class ConsumerSQS(
     }
 
     companion object {
-        private val logger = LoggerFactory.getLogger(ConsumerSQS::class.java)
+        private val logger = LoggerFactory.getLogger(CheckPaymentConsumerSQS::class.java)
         private const val HEADER_RECEIVE_COUNT = "Sqs_Msa_ApproximateReceiveCount"
         private const val HEADER_RECEIPT_HANDLE = "Sqs_ReceiptHandle"
     }

@@ -1,0 +1,6 @@
+aws:
+  region: sa-east-1
+  sqs:
+    endpoint: http://localhost:4566
+    queue:
+      test-name: test-queue
