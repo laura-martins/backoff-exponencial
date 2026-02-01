@@ -30,13 +30,10 @@ class CheckPaymentConsumerSQS(
         } catch (ex: Exception) {
             logger.error("[ConsumerSQS] Error processing message", ex)
 
-            val receiveCount = messageBody.headers[HEADER_RECEIVE_COUNT].toString().toInt()
-            val receiptHandle = messageBody.headers[HEADER_RECEIPT_HANDLE].toString()
-
             backoff.applyBackoff(
                 queueName = queueName,
-                receiptHandle = receiptHandle,
-                receiveCount = receiveCount
+                receiptHandle = messageBody.headers[HEADER_RECEIPT_HANDLE].toString(),
+                receiveCount = messageBody.headers[HEADER_RECEIVE_COUNT].toString().toInt()
             )
 
             throw ex

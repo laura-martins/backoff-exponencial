@@ -17,11 +17,6 @@ class ExponentialBackoffAdapter(
         receiptHandle: String,
         receiveCount: Int
     ) {
-        if (!backoffPolicy.shouldApplyBackoff(receiveCount)) {
-            logger.warn("Max receive attempts reached ({}). Skipping backoff — message will be moved to DLQ.", receiveCount)
-            return
-        }
-
         try {
             val visibilityTimeout = backoffPolicy.calculateVisibilityTimeout(receiveCount)
 
