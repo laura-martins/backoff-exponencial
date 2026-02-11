@@ -6,6 +6,11 @@ A estratégia utiliza o atributo **ApproximateReceiveCount**, incrementado autom
 
 ---
 
+## Diagrama do Fluxo de Processamento
+![flow_diagram.drawio.svg](docs/flow_diagram.drawio.svg)
+
+---
+
 ## Estratégia de Backoff
 
 Configurações adotadas:
@@ -39,7 +44,7 @@ Configurações adotadas:
 ## Fila de Teste (LocalStack)
 
 URL da fila:
-http://sqs.sa-east-1.localhost.localstack.cloud:4566/000000000000/test-queue
+http://sqs.sa-east-1.localhost.localstack.cloud:4566/000000000000/check-payment-queue
 
 ## Enviar mensagens (LocalStack / awslocal)
 
@@ -47,9 +52,9 @@ http://sqs.sa-east-1.localhost.localstack.cloud:4566/000000000000/test-queue
 
 ```bash
 awslocal sqs send-message \
-  --queue-url "http://sqs.sa-east-1.localhost.localstack.cloud:4566/000000000000/test-queue" \
+  --queue-url "http://sqs.sa-east-1.localhost.localstack.cloud:4566/000000000000/check-payment-queue" \
   --message-body '{
-    "paymentId": "123"
+    "paymentId": "13b570d4-accd-4591-a78c-3efc989671d4"
   }'
 ```
 
@@ -57,7 +62,7 @@ awslocal sqs send-message \
 
 ```bash
 awslocal sqs send-message \
-  --queue-url "http://sqs.sa-east-1.localhost.localstack.cloud:4566/000000000000/test-queue" \
+  --queue-url "http://sqs.sa-east-1.localhost.localstack.cloud:4566/000000000000/check-payment-queue" \
   --message-body '{
     "paymentId": "Mensagem com erro"
   }'
@@ -75,4 +80,4 @@ awslocal sqs send-message \
 *Configurações*: 
 - SPRING_PROFILES_ACTIVE=local
 
-![readme_exec_application.png](images/readme_exec_application.png)
+![readme_exec_application.png](docs/readme_exec_application.png)
