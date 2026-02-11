@@ -3,4 +3,4 @@ aws:
   sqs:
     endpoint: http://localhost:4566
     queue:
-      test-name: test-queue
+      check-payment-name: check-payment-queue

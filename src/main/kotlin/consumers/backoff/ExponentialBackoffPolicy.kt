@@ -8,14 +8,8 @@ import kotlin.math.min
 class ExponentialBackoffPolicy(
 
     private val baseVisibilityTimeout: Long = 30,
-    private val maxVisibilityTimeout: Long = 15 * 60,
-    private var maxReceiveCount: Int = 3
+    private val maxVisibilityTimeout: Long = 15 * 60
 ) {
-
-    fun shouldApplyBackoff(attempt: Int): Boolean {
-        require(attempt >= 1) { "Attempt must be >= 1" }
-        return attempt < maxReceiveCount
-    }
 
     fun calculateVisibilityTimeout(attempt: Int): Int {
         require(attempt >= 1) { "Attempt must be >= 1" }
