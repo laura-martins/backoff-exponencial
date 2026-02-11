@@ -80,4 +80,4 @@ awslocal sqs send-message \
 *Configurações*: 
 - SPRING_PROFILES_ACTIVE=local
 
-![readme_exec_application.png](docs/readme_exec_application.png)
+![exec_application.png](docs/exec_application.png)
