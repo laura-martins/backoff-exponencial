@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component
 import software.amazon.awssdk.services.sqs.SqsClient
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest
 
-// Realizar teste unitário
 @Component
 class ExponentialBackoffAdapter(
     private val sqsClient: SqsClient,
