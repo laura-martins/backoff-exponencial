@@ -71,7 +71,7 @@ awslocal sqs send-message \
 ### Como executar a aplicação (local)
 
 *Requisitos*:
-- Java 17
+- Java 21
 - Maven
 - Docker
 - LocalStack

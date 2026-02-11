@@ -8,9 +8,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.messaging.Message
 import org.springframework.stereotype.Component
-import java.util.UUID
+import java.util.*
 
-// Realizar teste unitário
 @Component
 class CheckPaymentConsumerSQS(
     private val backoff: ExponentialBackoffAdapter
@@ -21,13 +20,14 @@ class CheckPaymentConsumerSQS(
     @SqsListener("\${aws.sqs.queue.check-payment-name}")
     fun consume(messageBody: Message<CheckPaymentMessage>) {
         try {
-            logger.info("[ConsumerSQS] Received message headers={} payload={}", messageBody.headers, messageBody.payload)
+            logger.info("[ConsumerSQS] Received message payload={}", messageBody.payload)
 
             val body = messageBody.payload.toDomain()
             UUID.fromString(body.id)
 
+            logger.info("[ConsumerSQS] Message processed successfully")
         } catch (ex: Exception) {
-            logger.error("[ConsumerSQS] Error processing message", ex)
+            logger.error("[ConsumerSQS] Error processing message")
 
             backoff.applyBackoff(
                 queueName = queueName,
